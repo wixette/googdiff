@@ -30,12 +30,68 @@ font-size:14px;line-height:22px;}
 '''
 
 
+class Printer(object):
+    """The base class of all diff printers.
+    """
+    def __init__(self, path1, path2, diff):
+        self.path1 = path1
+        self.path2 = path2
+        self.diff = diff
+
+
+class ConsolePrinter(Printer):
+    """Formats the diff info as the console format.
+    """
+    def __init__(self, path1, path2, diff):
+        super().__init__(path1, path2, diff)
+
+    def print(self):
+        print(self.diff)
+
+
+class HtmlPrinter(Printer):
+    """Formats the diff info as the HTML format.
+    """
+    def __init__(self, path1, path2, diff, view_in_browser):
+        super().__init__(path1, path2, diff)
+        self.view_in_browser = view_in_browser
+
+    def print(self):
+        googdiff = diff_match_patch()
+        diff_html_span = googdiff.diff_prettyHtml(self.diff)
+        diff_out = DIFF_HTML_TMP % dict(text=diff_html_span,
+                                        file1=self.path1,
+                                        file2=self.path2)
+        if self.view_in_browser:
+            with tempfile.NamedTemporaryFile('w',
+                                             encoding='utf-8',
+                                             suffix='.html',
+                                             delete=False) as temp_file:
+                temp_file.write(diff_out)
+            webbrowser.open('file://%s' % temp_file.name)
+        else:
+            print(diff_out)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='diff tool using Google\'s diff-match-patch')
     parser.add_argument('files', metavar='FILE', type=str, nargs=2)
+    parser.add_argument(
+        '-c', '--console',
+        action='store_true',
+        help='Outputs diff info as console text.')
+    parser.add_argument(
+        '-t', '--html',
+        action='store_true',
+        help='Outputs diff info as html.')
+    parser.add_argument(
+        '-b', '--view_in_browser',
+        action='store_true',
+        default=True,
+        help='Outputs diff info as html and open it in web browser.')
     parser.add_argument('--timeout', type=float, default=0)
-    parser.add_argument('--view_in_browser', type=bool, default=True)
+
     args = parser.parse_args()
     path1, path2 = args.files
 
@@ -46,20 +102,13 @@ def main():
     diff = googdiff.diff_main(text1, text2, False)
     googdiff.diff_cleanupSemantic(diff)
 
-    diff_html_span = googdiff.diff_prettyHtml(diff)
+    printer = None
+    if args.console:
+        printer = ConsolePrinter(path1, path2, diff)
+    elif args.html or args.view_in_browser:
+        printer = HtmlPrinter(path1, path2, diff, args.view_in_browser)
 
-    diff_out = DIFF_HTML_TMP % dict(text=diff_html_span,
-                                    file1=path1,
-                                    file2=path2)
-    if args.view_in_browser:
-        with tempfile.NamedTemporaryFile('w',
-                                         encoding='utf-8',
-                                         suffix='.html',
-                                         delete=False) as temp_file:
-            temp_file.write(diff_out)
-        webbrowser.open('file://%s' % temp_file.name)
-    else:
-        print(diff_out)
+    printer.print()
 
 
 if __name__ == '__main__':
