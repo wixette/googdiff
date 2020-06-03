@@ -11,7 +11,10 @@ setuptools.setup(
     description='A wrapper of Google\'s diff-match-patch module.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=['diff-match-patch'],
+    install_requires=[
+        'console',
+        'diff-match-patch'
+    ],
     license='apache-2.0',
     packages=setuptools.find_packages(),
     url='https://github.com/wixette/my-writing-toolchain/tree/master/googdiff',

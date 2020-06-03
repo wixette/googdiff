@@ -1,1 +1,2 @@
+console
 diff-match-patch
