@@ -19,6 +19,9 @@ class Printer(object):
         self.path2, self.short_path2 = path2, self.trim_path(path2)
         self.diffs = diffs
 
+    RET_CHAR = '\n'
+    PILCROW_CHAR = '\u00B6'
+    PILCROW_HTML = '&para;'
     TRIM_PREFIX = '...'
     MAX_PATH_LEN = 70
 
@@ -38,14 +41,10 @@ class ConsolePrinter(Printer):
     def __init__(self, path1, path2, diffs):
         super().__init__(path1, path2, diffs)
 
-    RET_CHAR = '\n'
-    PILCROW_CHAR = '\u00B6'
-    PATH1_PREFIX = '<<< '
-    PATH2_PREFIX = '>>> '
 
     def print(self):
-        print(fx.bold(fg.red(self.PATH1_PREFIX + self.short_path1)))
-        print(fx.bold(fg.green(self.PATH2_PREFIX + self.short_path2)))
+        print(fx.bold(fg.red('<<< ' + self.short_path1)))
+        print(fx.bold(fg.green('>>> ' + self.short_path2)))
         print()
         sb = []
         for (op, data) in self.diffs:
@@ -70,7 +69,7 @@ class HtmlPrinter(Printer):
         super().__init__(path1, path2, diffs)
         self.view_in_browser = view_in_browser
 
-    HTML_TMP = u'''<!doctype html>
+    HTML_TMP = '''<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -93,8 +92,8 @@ class HtmlPrinter(Printer):
      header h1 {
        background-color: #69C;
        color: #eee;
-       font-size: 16px;
-       line-height: 3em;
+       font-size: 14px;
+       line-height: 1.8em;
        margin: 0;
        padding: 0 20px 0 20px;
        text-align: center;
@@ -117,14 +116,37 @@ class HtmlPrinter(Printer):
      }
      main {
        border: 1px solid #DEF;
-       margin: 10px 0 30px 0;
+       display: flex;
+       flex-direction: column;
+       margin: 20px 0 30px 0;
        width: 960px;
      }
-     main pre {
-       margin: 0;
-       overflow: auto;
-       padding: 0 20px 0 20px;
+     main .line {
+       align-items: stretch;
+       display: flex;
+       flex-direction: row;
+       justify-content: flex-start;
+     }
+     main .line-no {
+       background-color: #DEF;
+       color: #69C;
+       flex-grow: 0;
        line-height: 1.8em;
+       min-width: 60px;
+       overflow: hidden;
+       text-align: center;
+       -moz-user-select: none;
+       -khtml-user-select: none;
+       -webkit-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       width: 60px;
+     }
+     main .line-text {
+       flex-grow: 1;
+       line-height: 1.8em;
+       padding: 0 10px 0 10px;
+       white-space: pre-wrap
      }
      .red {
        color: #C00;
@@ -142,53 +164,66 @@ class HtmlPrinter(Printer):
        background-color: #DFD;
      }
     </style>
-    <script>
-     function update() {
-       const chk1 = document.getElementById('chk1');
-       const chk2 = document.getElementById('chk2');
-       const delElems = document.getElementsByClassName('del');
-       for (const elem of delElems) {
-         elem.style.display = chk1.checked ? 'inline' : 'none';
-       }
-       const addElems = document.getElementsByClassName('add');
-       for (const elem of addElems) {
-         elem.style.display = chk2.checked ? 'inline' : 'none';
-       }
-     }
-    </script>
   </head>
   <body>
     <header>
       <h1>
-        <a href="https://github.com/wixette/googdiff">GOOGDIFF</a>: <span class="notes">a diff tool based on Google's <a href="https://github.com/google/diff-match-patch">diff-match-patch</a><span>
+        <a href="https://github.com/wixette/googdiff">GOOGDIFF</a>:
+        <span class="notes">a diff tool based on Google's
+        <a href="https://github.com/google/diff-match-patch">
+        diff-match-patch</a><span>
       </h1>
       <nav>
-        <div class="red"><input type="checkbox" id="chk1" checked="checked" onchange="update();" value="">&nbsp;%(file1)s</div>
-        <div class="green"><input type="checkbox" id="chk2" checked="checked" onchange="update();" value="">&nbsp;%(file2)s</div>
+        <div class="red">&lt;&lt;&lt;&nbsp;%(file1)s</div>
+        <div class="green">&gt;&gt;&gt;&nbsp;%(file2)s</div>
       </nav>
     </header>
     <main>
-      <pre>
 %(diffs)s
-      </pre>
     </main>
   </body>
 </html>
 '''
 
-    def print(self):
-        googdiff = dmp()
+    LINE_TMP = u'''
+      <div class="line">
+        <div class="line-no">%(line_no)d</div>
+        <div class="line-text">%(line_text)s</div>
+      </div>
+'''
+
+    ADD_SPAN_BEGIN = '<span class="add">'
+    DEL_SPAN_BEGIN = '<span class="del">'
+    SPAN_END = '</span>'
+
+    def get_lines(self):
         sb = []
         for (op, data) in self.diffs:
             text = html.escape(data)
             if op == dmp.DIFF_INSERT:
-                sb.append('<span class="add">' + text + '</span>')
+                text = text.replace(
+                    self.RET_CHAR,
+                    self.PILCROW_HTML + self.SPAN_END +
+                    self.RET_CHAR +
+                    self.ADD_SPAN_BEGIN)
+                sb.append(self.ADD_SPAN_BEGIN + text + self.SPAN_END)
             elif op == dmp.DIFF_DELETE:
-                sb.append('<span class="del">' + text + '</span>')
+                text = text.replace(self.RET_CHAR, self.PILCROW_HTML)
+                sb.append(self.DEL_SPAN_BEGIN + text + self.SPAN_END)
             elif op == dmp.DIFF_EQUAL:
                 sb.append(text)
+        lines = ''.join(sb)
+        return lines.splitlines()
+
+    def print(self):
+        googdiff = dmp()
+        line_no = 0
+        sb = []
+        for line in self.get_lines():
+            line_no += 1
+            sb.append(self.LINE_TMP % dict(line_no=line_no,
+                                           line_text=line))
         diffs_text = ''.join(sb);
-        print(self.HTML_TMP[664:780])
         diffs_html = self.HTML_TMP % dict(diffs=diffs_text,
                                           file1=self.short_path1,
                                           file2=self.short_path2)
