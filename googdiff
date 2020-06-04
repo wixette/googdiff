@@ -11,14 +11,68 @@ from console import fg, bg, fx
 from diff_match_patch import diff_match_patch as dmp
 
 
-RET_CHAR = '\n'
-PILCROW_CHAR = '\u00B6'
-PATH1_PREFIX = '<<< '
-PATH2_PREFIX = '>>> '
 
 
-DIFF_HTML_TMP = u'''
-<!doctype html>
+class Printer(object):
+    """The base class of diff printers.
+    """
+    def __init__(self, path1, path2, diffs):
+        self.path1, self.short_path1 = path1, self.trim_path(path1)
+        self.path2, self.short_path2 = path2, self.trim_path(path2)
+        self.diffs = diffs
+
+    TRIM_PREFIX = '...'
+    MAX_PATH_LEN = 70
+
+    def trim_path(self, path):
+        """ Trims a path string to a fixed length.
+        """
+        if len(path) > self.MAX_PATH_LEN:
+            return (self.TRIM_PREFIX +
+                    path[len(self.TRIM_PREFIX) - self.MAX_PATH_LEN:])
+        else:
+            return path
+
+
+class ConsolePrinter(Printer):
+    """Formats the diffs info as the console format.
+    """
+    def __init__(self, path1, path2, diffs):
+        super().__init__(path1, path2, diffs)
+
+    RET_CHAR = '\n'
+    PILCROW_CHAR = '\u00B6'
+    PATH1_PREFIX = '<<< '
+    PATH2_PREFIX = '>>> '
+
+    def print(self):
+        print(fx.bold(fg.red(self.PATH1_PREFIX + self.short_path1)))
+        print(fx.bold(fg.green(self.PATH2_PREFIX + self.short_path2)))
+        print()
+        sb = []
+        for (op, data) in self.diffs:
+            text = data
+            if op == dmp.DIFF_INSERT:
+                text = text.replace(
+                    self.RET_CHAR,
+                    self.PILCROW_CHAR + fg.default + self.RET_CHAR + fg.default)
+                sb.append(fg.green(text))
+            elif op == dmp.DIFF_DELETE:
+                text = text.replace('\n', self.PILCROW_CHAR)
+                sb.append(fg.red(text))
+            elif op == dmp.DIFF_EQUAL:
+                sb.append(text)
+        print(''.join(sb))
+
+
+class HtmlPrinter(Printer):
+    """Formats the diffs info as the HTML format.
+    """
+    def __init__(self, path1, path2, diffs, view_in_browser):
+        super().__init__(path1, path2, diffs)
+        self.view_in_browser = view_in_browser
+
+    HTML_TMP = u'''<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -37,60 +91,12 @@ font-size:14px;line-height:22px;}
 </html>
 '''
 
-
-class Printer(object):
-    """The base class of diff printers.
-    """
-    def __init__(self, path1, path2, diffs):
-        self.path1 = path1
-        self.path2 = path2
-        self.diffs = diffs
-
-    def print(self):
-        """ Formats the diffs.
-        """
-        pass
-
-
-class ConsolePrinter(Printer):
-    """Formats the diffs info as the console format.
-    """
-    def __init__(self, path1, path2, diffs):
-        super().__init__(path1, path2, diffs)
-
-    def print(self):
-        print(fx.bold(fg.red(PATH1_PREFIX + self.path1)))
-        print(fx.bold(fg.green(PATH2_PREFIX + self.path2)))
-        print()
-        sb = []
-        for (op, data) in self.diffs:
-            text = data
-            if op == dmp.DIFF_INSERT:
-                text = text.replace(
-                    RET_CHAR,
-                    PILCROW_CHAR + fg.default + RET_CHAR + fg.default)
-                sb.append(fg.green(text))
-            elif op == dmp.DIFF_DELETE:
-                text = text.replace('\n', PILCROW_CHAR)
-                sb.append(fg.red(text))
-            elif op == dmp.DIFF_EQUAL:
-                sb.append(text)
-        print(''.join(sb))
-
-
-class HtmlPrinter(Printer):
-    """Formats the diffs info as the HTML format.
-    """
-    def __init__(self, path1, path2, diffs, view_in_browser):
-        super().__init__(path1, path2, diffs)
-        self.view_in_browser = view_in_browser
-
     def print(self):
         googdiff = dmp()
         diff_html_span = googdiff.diff_prettyHtml(self.diffs)
-        diff_out = DIFF_HTML_TMP % dict(text=diff_html_span,
-                                        file1=self.path1,
-                                        file2=self.path2)
+        diff_out = self.HTML_TMP % dict(text=diff_html_span,
+                                        file1=self.short_path1,
+                                        file2=self.short_path2)
         if self.view_in_browser:
             with tempfile.NamedTemporaryFile('w',
                                              encoding='utf-8',
