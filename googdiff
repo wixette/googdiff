@@ -3,14 +3,12 @@
 """
 
 import argparse
+import html
 import tempfile
 import webbrowser
 
-
 from console import fg, bg, fx
 from diff_match_patch import diff_match_patch as dmp
-
-
 
 
 class Printer(object):
@@ -74,38 +72,135 @@ class HtmlPrinter(Printer):
 
     HTML_TMP = u'''<!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<style>
-body{font-family:"Lucida Console",Monaco,"Courier New",Courier, monospace;
-font-size:14px;padding:20px;}
-h1{font-size:14px;border-bottom:#ccc solid 1px;margin-bottom:20px;}
-p{font-family:"Lucida Console",Monaco,"Courier New",Courier, monospace;
-font-size:14px;line-height:22px;}
-</style>
-</head>
-<body>
-<h1>diff between "%(file1)s" and "%(file2)s"</h2>
-<p>%(text)s</p>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <style>
+     body {
+       align-items: center;
+       border: 0;
+       color: #333;
+       display: flex;
+       flex-direction: column;
+       font-family: "Lucida Console", Monaco, "Courier New", Courier,monospace;
+       font-size: 14px;
+       margin: 0;
+       padding: 0;
+     }
+     header {
+       margin: 30px 0 0 0;
+       width: 960px;
+     }
+     header h1 {
+       background-color: #69C;
+       color: #eee;
+       font-size: 16px;
+       line-height: 3em;
+       margin: 0;
+       padding: 0 20px 0 20px;
+       text-align: center;
+     }
+     header h1 .notes {
+       font-size: 12px;
+     }
+     header a:link, header a:visited, header a:hover, header a:active {
+       color: #eee;
+     }
+     nav {
+       background-color: #DEF;
+       line-height: 1.8em;
+       overflow: hidden;
+       padding: 0 20px 0 20px;
+     }
+     nav input {
+       margin: 0;
+       padding: 0;
+     }
+     main {
+       border: 1px solid #DEF;
+       margin: 10px 0 30px 0;
+       width: 960px;
+     }
+     main pre {
+       margin: 0;
+       overflow: auto;
+       padding: 0 20px 0 20px;
+       line-height: 1.8em;
+     }
+     .red {
+       color: #C00;
+     }
+     .green {
+       color: #090;
+     }
+     .del {
+       color: #C00;
+       background-color: #FDD;
+       text-decoration-line: line-through;
+     }
+     .add {
+       color: #090;
+       background-color: #DFD;
+     }
+    </style>
+    <script>
+     function update() {
+       const chk1 = document.getElementById('chk1');
+       const chk2 = document.getElementById('chk2');
+       const delElems = document.getElementsByClassName('del');
+       for (const elem of delElems) {
+         elem.style.display = chk1.checked ? 'inline' : 'none';
+       }
+       const addElems = document.getElementsByClassName('add');
+       for (const elem of addElems) {
+         elem.style.display = chk2.checked ? 'inline' : 'none';
+       }
+     }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <a href="https://github.com/wixette/googdiff">GOOGDIFF</a>: <span class="notes">a diff tool based on Google's <a href="https://github.com/google/diff-match-patch">diff-match-patch</a><span>
+      </h1>
+      <nav>
+        <div class="red"><input type="checkbox" id="chk1" checked="checked" onchange="update();" value="">&nbsp;%(file1)s</div>
+        <div class="green"><input type="checkbox" id="chk2" checked="checked" onchange="update();" value="">&nbsp;%(file2)s</div>
+      </nav>
+    </header>
+    <main>
+      <pre>
+%(diffs)s
+      </pre>
+    </main>
+  </body>
 </html>
 '''
 
     def print(self):
         googdiff = dmp()
-        diff_html_span = googdiff.diff_prettyHtml(self.diffs)
-        diff_out = self.HTML_TMP % dict(text=diff_html_span,
-                                        file1=self.short_path1,
-                                        file2=self.short_path2)
+        sb = []
+        for (op, data) in self.diffs:
+            text = html.escape(data)
+            if op == dmp.DIFF_INSERT:
+                sb.append('<span class="add">' + text + '</span>')
+            elif op == dmp.DIFF_DELETE:
+                sb.append('<span class="del">' + text + '</span>')
+            elif op == dmp.DIFF_EQUAL:
+                sb.append(text)
+        diffs_text = ''.join(sb);
+        print(self.HTML_TMP[664:780])
+        diffs_html = self.HTML_TMP % dict(diffs=diffs_text,
+                                          file1=self.short_path1,
+                                          file2=self.short_path2)
         if self.view_in_browser:
             with tempfile.NamedTemporaryFile('w',
                                              encoding='utf-8',
                                              suffix='.html',
                                              delete=False) as temp_file:
-                temp_file.write(diff_out)
+                temp_file.write(diffs_html)
             webbrowser.open('file://%s' % temp_file.name)
         else:
-            print(diff_out)
+            print(diffs_html)
 
 
 def main():
