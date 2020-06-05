@@ -38,7 +38,7 @@ git difftool -y --extcmd='googdiff -b'
 
 ## Screenshots
 
-<img src="images/sample_01.png" width="500">
+<img src="images/sample_01.png" width="350">
 
 <img src="images/sample_02.png" width="900">
 
