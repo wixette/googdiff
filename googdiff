@@ -36,7 +36,7 @@ class Printer(object):
 
 
 class ConsolePrinter(Printer):
-    """Formats the diffs info as the console format.
+    """Formats the diffs info for console output.
     """
     def __init__(self, path1, path2, diffs):
         super().__init__(path1, path2, diffs)
@@ -63,7 +63,7 @@ class ConsolePrinter(Printer):
 
 
 class HtmlPrinter(Printer):
-    """Formats the diffs info as the HTML format.
+    """Formats the diffs info for HTML output.
     """
     def __init__(self, path1, path2, diffs, view_in_browser):
         super().__init__(path1, path2, diffs)
@@ -245,15 +245,15 @@ def main():
     parser.add_argument(
         '-c', '--console',
         action='store_true',
-        help='Outputs diff info as console text.')
+        help='show diffs in console mode.')
     parser.add_argument(
         '-t', '--html',
         action='store_true',
-        help='Outputs diff info as html.')
+        help='show diffs as HTML text.')
     parser.add_argument(
-        '-b', '--view_in_browser',
+        '-b', '--browser',
         action='store_true',
-        help='Outputs diff info as html and open it in web browser.')
+        help='show diffs in HTML format with web browser.')
     parser.add_argument('--timeout', type=float, default=0)
 
     args = parser.parse_args()
@@ -269,11 +269,10 @@ def main():
     printer = None
     if args.console:
         printer = ConsolePrinter(path1, path2, diffs)
-    elif args.html or args.view_in_browser:
-        printer = HtmlPrinter(path1, path2, diffs, args.view_in_browser)
+    elif args.html or args.browser:
+        printer = HtmlPrinter(path1, path2, diffs, args.browser)
     else:
         printer = ConsolePrinter(path1, path2, diffs)
-
     printer.print()
 
 
