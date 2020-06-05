@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='googdiff',
-    version='0.3.0',
+    version='0.3.1',
     author='wixette',
     author_email='wixette@gmail.com',
     description='A wrapper of Google\'s diff-match-patch module.',
@@ -17,7 +17,7 @@ setuptools.setup(
     ],
     license='apache-2.0',
     packages=setuptools.find_packages(),
-    url='https://github.com/wixette/my-writing-toolchain/tree/master/googdiff',
+    url='https://github.com/wixette/googdiff',
     scripts=['googdiff'],
     classifiers=[
         'Programming Language :: Python :: 3',
