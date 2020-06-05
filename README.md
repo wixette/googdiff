@@ -26,7 +26,7 @@ googdiff -c file1 file2
 googdiff -b file1 file2
 ```
 
-## Git diff with googdiff:
+## Git diff with googdiff
 
 ```
 # in text mode:
@@ -35,3 +35,11 @@ git difftool -y --extcmd=googdiff
 # or, in browser:
 git difftool -y --extcmd='googdiff -b'
 ```
+
+## Screenshots
+
+<img src="images/sample_01.png" width="500">
+
+<img src="images/sample_02.png" width="900">
+
+<img src="images/sample_03.png" width="900">
