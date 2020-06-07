@@ -20,19 +20,46 @@ class Printer(object):
         self.diffs = diffs
 
     RET_CHAR = '\n'
-    PILCROW_CHAR = '\u00B6'
-    PILCROW_HTML = '&para;'
     TRIM_PREFIX = '...'
     MAX_PATH_LEN = 70
 
+    # The following defines must be overridden by subclasses.
+    PARA_CHAR = None
+    ADD_SPAN_BEGIN = None
+    DEL_SPAN_BEGIN = None
+    SPAN_END = None
+
     def trim_path(self, path):
-        """ Trims a path string to a fixed length.
+        """Trims a path string to a fixed length.
         """
         if len(path) > self.MAX_PATH_LEN:
             return (self.TRIM_PREFIX +
                     path[len(self.TRIM_PREFIX) - self.MAX_PATH_LEN:])
         else:
             return path
+
+    def get_lines(self, html_escape=False):
+        """Returns pre-formatted strings that show diffs line by line.
+        """
+        sb = []
+        for (op, data) in self.diffs:
+            text = data
+            if html_escape:
+                text = html.escape(text)
+            if op == dmp.DIFF_INSERT:
+                text = text.replace(
+                    self.RET_CHAR,
+                    self.PARA_CHAR + self.SPAN_END +
+                    self.RET_CHAR +
+                    self.ADD_SPAN_BEGIN)
+                sb.append(self.ADD_SPAN_BEGIN + text + self.SPAN_END)
+            elif op == dmp.DIFF_DELETE:
+                text = text.replace(self.RET_CHAR, self.PARA_CHAR)
+                sb.append(self.DEL_SPAN_BEGIN + text + self.SPAN_END)
+            elif op == dmp.DIFF_EQUAL:
+                sb.append(text)
+        lines = ''.join(sb)
+        return lines.splitlines()
 
 
 class ConsolePrinter(Printer):
@@ -41,25 +68,22 @@ class ConsolePrinter(Printer):
     def __init__(self, path1, path2, diffs):
         super().__init__(path1, path2, diffs)
 
+    PARA_CHAR = '\u00B6'
+    ADD_SPAN_BEGIN = fg.green
+    DEL_SPAN_BEGIN = fg.red
+    SPAN_END = fg.default
 
     def print(self):
         print(fx.bold(fg.red('<<< ' + self.short_path1)))
         print(fx.bold(fg.green('>>> ' + self.short_path2)))
         print()
+        line_no = 0
         sb = []
-        for (op, data) in self.diffs:
-            text = data
-            if op == dmp.DIFF_INSERT:
-                text = text.replace(
-                    self.RET_CHAR,
-                    self.PILCROW_CHAR + fg.default + self.RET_CHAR + fg.default)
-                sb.append(fg.green(text))
-            elif op == dmp.DIFF_DELETE:
-                text = text.replace('\n', self.PILCROW_CHAR)
-                sb.append(fg.red(text))
-            elif op == dmp.DIFF_EQUAL:
-                sb.append(text)
-        print(''.join(sb))
+        for line in self.get_lines(html_escape=False):
+            line_no += 1
+            sb.append(fg.yellow + ('%04d: ' % line_no) + fg.default + line)
+        diffs_text = '\n'.join(sb);
+        print(diffs_text)
 
 
 class HtmlPrinter(Printer):
@@ -192,34 +216,16 @@ class HtmlPrinter(Printer):
       </div>
 '''
 
+    PARA_CHAR = '&para;'
     ADD_SPAN_BEGIN = '<span class="add">'
     DEL_SPAN_BEGIN = '<span class="del">'
     SPAN_END = '</span>'
-
-    def get_lines(self):
-        sb = []
-        for (op, data) in self.diffs:
-            text = html.escape(data)
-            if op == dmp.DIFF_INSERT:
-                text = text.replace(
-                    self.RET_CHAR,
-                    self.PILCROW_HTML + self.SPAN_END +
-                    self.RET_CHAR +
-                    self.ADD_SPAN_BEGIN)
-                sb.append(self.ADD_SPAN_BEGIN + text + self.SPAN_END)
-            elif op == dmp.DIFF_DELETE:
-                text = text.replace(self.RET_CHAR, self.PILCROW_HTML)
-                sb.append(self.DEL_SPAN_BEGIN + text + self.SPAN_END)
-            elif op == dmp.DIFF_EQUAL:
-                sb.append(text)
-        lines = ''.join(sb)
-        return lines.splitlines()
 
     def print(self):
         googdiff = dmp()
         line_no = 0
         sb = []
-        for line in self.get_lines():
+        for line in self.get_lines(html_escape=True):
             line_no += 1
             sb.append(self.LINE_TMP % dict(line_no=line_no,
                                            line_text=line))

@@ -40,7 +40,7 @@ git difftool -y --extcmd='googdiff -b'
 
 setuptools.setup(
     name='googdiff',
-    version='0.3.1',
+    version='0.4.0',
     author='wixette',
     author_email='wixette@gmail.com',
     description='A wrapper of Google\'s diff-match-patch module.',

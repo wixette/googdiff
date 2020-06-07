@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+     body {
+       align-items: center;
+       border: 0;
+       color: #333;
+       display: flex;
+       flex-direction: column;
+       font-family: "Lucida Console", Monaco, "Courier New", Courier,monospace;
+       font-size: 14px;
+       margin: 0;
+       padding: 0;
+     }
+     header {
+       margin: 30px 0 0 0;
+       width: 960px;
+     }
+     header h1 {
+       background-color: #69C;
+       color: #eee;
+       font-size: 14px;
+       line-height: 1.8em;
+       margin: 0;
+       padding: 0 20px 0 20px;
+       text-align: center;
+     }
+     header h1 .notes {
+       font-size: 12px;
+     }
+     header a:link, header a:visited, header a:hover, header a:active {
+       color: #eee;
+     }
+     nav {
+       background-color: #DEF;
+       line-height: 1.8em;
+       overflow: hidden;
+       padding: 0 20px 0 20px;
+     }
+     nav input {
+       margin: 0;
+       padding: 0;
+     }
+     main {
+       border: 1px solid #DEF;
+       display: flex;
+       flex-direction: column;
+       margin: 20px 0 30px 0;
+       width: 960px;
+     }
+     main .line {
+       align-items: stretch;
+       display: flex;
+       flex-direction: row;
+       justify-content: flex-start;
+     }
+     main .line-no {
+       background-color: #DEF;
+       color: #69C;
+       flex-grow: 0;
+       line-height: 1.8em;
+       min-width: 60px;
+       overflow: hidden;
+       text-align: center;
+       -moz-user-select: none;
+       -khtml-user-select: none;
+       -webkit-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       width: 60px;
+     }
+     main .line-text {
+       flex-grow: 1;
+       line-height: 1.8em;
+       padding: 0 10px 0 10px;
+       white-space: pre-wrap
+     }
+     .red {
+       color: #C00;
+     }
+     .green {
+       color: #090;
+     }
+     .del {
+       color: #C00;
+       background-color: #FDD;
+       text-decoration-line: line-through;
+     }
+     .add {
+       color: #090;
+       background-color: #DFD;
+     }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <a href="https://github.com/wixette/googdiff">GOOGDIFF</a>:
+        <span class="notes">a diff tool based on Google's
+        <a href="https://github.com/google/diff-match-patch">
+        diff-match-patch</a><span>
+      </h1>
+      <nav>
+        <div class="red">&lt;&lt;&lt;&nbsp;test_files/code.v1.py</div>
+        <div class="green">&gt;&gt;&gt;&nbsp;test_files/code.v2.py</div>
+      </nav>
+    </header>
+    <main>
+
+      <div class="line">
+        <div class="line-no">1</div>
+        <div class="line-text"># <span class="del">Python</span><span class="add">This is another</span> Hello, world!</div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">2</div>
+        <div class="line-text"></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">3</div>
+        <div class="line-text"><span class="add">name = input(&#x27;Your name: &#x27;)&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">4</div>
+        <div class="line-text"><span class="add"></span>print(&#x27;Hello, <span class="del">world!&#x27;</span><span class="add">%s!&#x27; % name</span>)</div>
+      </div>
+
+    </main>
+  </body>
+</html>
+

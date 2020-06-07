@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+     body {
+       align-items: center;
+       border: 0;
+       color: #333;
+       display: flex;
+       flex-direction: column;
+       font-family: "Lucida Console", Monaco, "Courier New", Courier,monospace;
+       font-size: 14px;
+       margin: 0;
+       padding: 0;
+     }
+     header {
+       margin: 30px 0 0 0;
+       width: 960px;
+     }
+     header h1 {
+       background-color: #69C;
+       color: #eee;
+       font-size: 14px;
+       line-height: 1.8em;
+       margin: 0;
+       padding: 0 20px 0 20px;
+       text-align: center;
+     }
+     header h1 .notes {
+       font-size: 12px;
+     }
+     header a:link, header a:visited, header a:hover, header a:active {
+       color: #eee;
+     }
+     nav {
+       background-color: #DEF;
+       line-height: 1.8em;
+       overflow: hidden;
+       padding: 0 20px 0 20px;
+     }
+     nav input {
+       margin: 0;
+       padding: 0;
+     }
+     main {
+       border: 1px solid #DEF;
+       display: flex;
+       flex-direction: column;
+       margin: 20px 0 30px 0;
+       width: 960px;
+     }
+     main .line {
+       align-items: stretch;
+       display: flex;
+       flex-direction: row;
+       justify-content: flex-start;
+     }
+     main .line-no {
+       background-color: #DEF;
+       color: #69C;
+       flex-grow: 0;
+       line-height: 1.8em;
+       min-width: 60px;
+       overflow: hidden;
+       text-align: center;
+       -moz-user-select: none;
+       -khtml-user-select: none;
+       -webkit-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       width: 60px;
+     }
+     main .line-text {
+       flex-grow: 1;
+       line-height: 1.8em;
+       padding: 0 10px 0 10px;
+       white-space: pre-wrap
+     }
+     .red {
+       color: #C00;
+     }
+     .green {
+       color: #090;
+     }
+     .del {
+       color: #C00;
+       background-color: #FDD;
+       text-decoration-line: line-through;
+     }
+     .add {
+       color: #090;
+       background-color: #DFD;
+     }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <a href="https://github.com/wixette/googdiff">GOOGDIFF</a>:
+        <span class="notes">a diff tool based on Google's
+        <a href="https://github.com/google/diff-match-patch">
+        diff-match-patch</a><span>
+      </h1>
+      <nav>
+        <div class="red">&lt;&lt;&lt;&nbsp;test_files/chinese.v1.txt</div>
+        <div class="green">&gt;&gt;&gt;&nbsp;test_files/chinese.v2.txt</div>
+      </nav>
+    </header>
+    <main>
+
+      <div class="line">
+        <div class="line-no">1</div>
+        <div class="line-text">第一回 甄士隐梦幻识通灵 贾雨村风尘怀闺秀</div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">2</div>
+        <div class="line-text"></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">3</div>
+        <div class="line-text"><span class="del">——</span>此开卷第一回也。作者自云：<span class="add">因</span>曾历过一番梦幻之后，故将真事隐去，而借<span class="add">“</span>通灵<span class="del">说</span><span class="add">”之说，撰</span>此《石头记》一书也<span class="del">，</span><span class="add">。</span>故曰“甄士隐”云云。但书中所记何事何人<span class="del">?自己</span><span class="add">？自</span>又云：“今风尘碌碌，一事无成，忽念及当日所有之女子<span class="del">：</span><span class="add">，</span>一一细考较去，觉其行止见识皆出<span class="add">于</span>我之上。<span class="add">何</span>我堂堂须眉<span class="add">，</span>诚不若彼裙钗<span class="del">，我</span><span class="add">哉？</span>实愧则有馀，悔又无益<span class="del">，</span><span class="add">之</span>大无可如何之日也<span class="del">。</span><span class="add">！</span>当此<span class="del">日</span>，<span class="add">则自</span>欲将已往所赖天恩祖德，锦衣纨<span class="add">袴</span>之时，饫甘餍肥之日，背父兄教育之恩，负师友规训之德，以<span class="del">致</span><span class="add">至</span>今日一技无成<span class="del">、</span><span class="add">，</span>半生潦倒之罪，编述一集，以告天下<span class="del">；知</span><span class="add">人：</span>我之<span class="del">负</span>罪固<span class="del">多</span><span class="add">不免</span>，然闺阁中<span class="add">本自</span>历历有人，万不可因我之不肖，自护己短，一并使其泯灭也。<span class="del">所以蓬牖茅椽，绳床瓦灶，并不足妨我襟怀；况那晨风夕月，阶柳庭花，更觉得润人笔墨。我虽不学</span><span class="add">虽今日之茅椽蓬牖，瓦灶绳床，其晨夕风露，阶柳庭花，亦未有妨我之襟怀笔墨者。虽我未学，下笔</span>无文，又何妨用假语村言<span class="add">，</span>敷演出<span class="del">来?</span><span class="add">一段故事来，</span>亦可使闺阁昭传<span class="del">。</span><span class="add">，</span>复可<span class="del">破一时之闷，醒同人之目</span><span class="add">悦世之目，破人愁闷</span>，不亦宜乎？”故曰“贾雨村<span class="del">”</span>云云。<span class="del">更于篇中间</span><span class="add">&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">4</div>
+        <div class="line-text"><span class="add">&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">5</div>
+        <div class="line-text"><span class="add">此回中凡</span>用“梦”<span class="add">用</span>“幻”等字，<span class="del">却是此书本旨，兼寓提醒阅者之意</span><span class="add">是提醒阅者眼目，亦是此书立意本旨</span>。</div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">6</div>
+        <div class="line-text"></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">7</div>
+        <div class="line-text"><span class="add">列位</span>看官<span class="add">：</span>你道此书从何而<span class="del">起?说来</span><span class="add">来？说起根由</span>虽近荒唐，细<span class="del">玩颇</span><span class="add">按则深</span>有趣味。<span class="del">却说那</span><span class="add">待在下将此来历注明，方使阅者了然不惑。&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">8</div>
+        <div class="line-text"><span class="add">&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">9</div>
+        <div class="line-text"><span class="add">原来</span>女娲氏炼石补天之时，于大荒山无稽崖炼成高<span class="add">经</span>十二丈<span class="del">、见方</span><span class="add">，方经</span>二十四丈<span class="del">大的</span>顽石三万六千五百零一块。<span class="del">那</span>娲皇<span class="add">氏</span>只用了三万六千五百块，<span class="add">只</span>单单剩<span class="del">下</span><span class="add">了</span>一块未用，<span class="add">便</span>弃在<span class="add">此山</span>青埂峰下。谁知此石自经<span class="del">锻</span><span class="add">煅</span>炼之后，灵性已通，<span class="del">自去自来，可大可小。</span>因见众石俱得补天，独自己无<span class="del">才不得</span><span class="add">材不堪</span>入选，遂自怨自<span class="del">愧</span><span class="add">叹</span>，日夜悲<span class="del">哀。</span><span class="add">号惭愧。&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">10</div>
+        <div class="line-text"><span class="add">&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">11</div>
+        <div class="line-text"><span class="add"></span>一日<span class="add">，</span>正当嗟悼之际，俄见一僧一道远远而来，生得骨格不凡，丰神迥异，<span class="del">来到这青埂峰下，席地坐谈。见着这块鲜莹明洁的石头，且又缩成扇坠一般，甚属可爱</span><span class="add">说说笑笑来至峰下，坐于石边高谈快论。先是说些云山雾海神仙玄幻之事，后便说到红尘中荣华富贵；此石听了，不觉打动凡心，也想要到人间去享一享这荣华富贵，但自恨粗蠢，不得已，便口吐人言，向那僧道说道：“大师，弟子蠢物，不能见礼了。适闻二位谈那人世间荣耀繁华，心切慕之。弟子质虽粗蠢，性却稍通；况见二师仙形道体，定非凡品，必有补天济世之材，利物济人之德。如蒙发一点慈心，携带弟子得入红尘，在那富贵场中，温柔乡里受享几年，自当永佩洪恩，万劫不忘也。”二仙师听毕，齐憨笑道：“善哉，善哉！那红尘中有却有些乐事，但不能永远依恃，况又有‘美中不足，好事多魔’八个字紧相连属，瞬息间则又乐极悲生，人非物换，究竟是到头一梦，万境归空，倒不如不去的好。&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">12</div>
+        <div class="line-text"><span class="add">&para;</span></div>
+      </div>
+
+      <div class="line">
+        <div class="line-no">13</div>
+        <div class="line-text"><span class="add">这石凡心已炽，那里听得进这话去，乃复苦求再四。二仙知不可强制，乃叹道：“此亦静极思动，无中生有之数也。既如此，我们便携你去受享受享，只是到不得意时，切莫后悔。”石道：“自然，自然。”那僧又道：“若说你性灵，却又如此质蠢，并更无奇贵之处。如此也只好踮脚而已。也罢，我如今大施佛法助你助，待劫终之日，复还本质，以了此案。你道好否？”石头听了，感谢不尽。那僧便念咒书符，大展幻术，将一块大石登时变成一块鲜明莹洁的美玉，且又缩成扇坠大小的可佩可拿</span>。那僧托于掌上，笑道：“形体倒也是个<span class="del">灵</span><span class="add">宝</span>物了<span class="del">，只是</span><span class="add">！还只</span>没有实在的好处<span class="del">。</span><span class="add">，</span>须得再镌上<span class="del">几个</span><span class="add">数</span>字，使人<span class="del">人见了便知你是件奇物，</span><span class="add">一见便知是奇物方妙。</span>然后携你到那昌明隆盛之邦<span class="del">、</span><span class="add">，</span>诗礼簪缨之族<span class="del">、</span><span class="add">，</span>花柳繁华地<span class="del">、</span><span class="add">，</span>温柔富贵乡<span class="del">那里去走一遭。”石头听了大喜，因问：“不知可镌何字?携到何方?望乞明示</span><span class="add">去安身乐业。”石头听了，喜不能禁，乃问：“不知赐了弟子那几件奇处，又不知携了弟子到何地方？望乞明示，使弟子不惑</span>。”那僧笑道：“你且莫问，日后自然明白<span class="add">的</span>。”说<span class="del">毕</span><span class="add">着</span>，便袖了<span class="add">这石</span>，同那道人飘然而去，竟不知投<span class="del">向</span><span class="add">奔</span>何方<span class="add">何舍</span>。</div>
+      </div>
+
+    </main>
+  </body>
+</html>
+
